@@ -1,65 +1,88 @@
-import Image from "next/image";
+import { Suspense } from 'react'
+import Link from 'next/link'
+import WishCard from '@/components/WishCard'
+import CategoryFilter from '@/components/CategoryFilter'
+import { Wish } from '@/lib/types'
 
-export default function Home() {
+async function getWishes(searchParams: Record<string, string>) {
+  const params = new URLSearchParams()
+  if (searchParams.category) params.set('category', searchParams.category)
+  if (searchParams.urgent) params.set('urgent', searchParams.urgent)
+  if (searchParams.page) params.set('page', searchParams.page)
+
+  const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
+  const res = await fetch(`${baseUrl}/api/wishes?${params.toString()}`, {
+    cache: 'no-store',
+  })
+
+  if (!res.ok) return { wishes: [], total: 0 }
+  return res.json() as Promise<{ wishes: Wish[]; total: number }>
+}
+
+export default async function Home({
+  searchParams,
+}: {
+  searchParams: Record<string, string>
+}) {
+  const { wishes, total } = await getWishes(searchParams)
+  const page = parseInt(searchParams.page || '1')
+  const totalPages = Math.ceil(total / 12)
+
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="max-w-5xl mx-auto px-4 py-10">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Jōzō 揪作許願池</h1>
+          <p className="text-gray-500 text-sm mt-1">讓想法被看見，讓對的人找到彼此</p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <Link
+          href="/wish/new"
+          className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
+        >
+          ✨ 許個願
+        </Link>
+      </div>
+
+      {/* Filter */}
+      <div className="mb-6">
+        <Suspense>
+          <CategoryFilter />
+        </Suspense>
+      </div>
+
+      {/* Grid */}
+      {wishes.length === 0 ? (
+        <div className="text-center py-20 text-gray-400">
+          <p className="text-4xl mb-3">🌊</p>
+          <p>還沒有許願，來第一個吧！</p>
         </div>
-      </main>
-    </div>
-  );
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {wishes.map((wish) => (
+            <WishCard key={wish.id} wish={wish} />
+          ))}
+        </div>
+      )}
+
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex justify-center gap-2 mt-10">
+          {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
+            <Link
+              key={p}
+              href={`/?${new URLSearchParams({ ...searchParams, page: String(p) }).toString()}`}
+              className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${
+                p === page
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-white text-gray-600 border border-gray-200 hover:border-indigo-300'
+              }`}
+            >
+              {p}
+            </Link>
+          ))}
+        </div>
+      )}
+    </main>
+  )
 }
