@@ -14,24 +14,18 @@ export const authOptions: NextAuthOptions = {
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null
 
-        // 從 Supabase 取得管理員帳號
         const { data, error } = await supabaseAdmin
-          .from('admin_account')
-          .select('email, password_hash')
-          .eq('id', 1)
+          .from('admin_accounts')
+          .select('id, email, password_hash')
+          .eq('email', credentials.email)
           .single()
 
-        // fallback 到環境變數（初始化時用）
-        const adminEmail = data?.email ?? process.env.ADMIN_EMAIL
-        const adminHash = data?.password_hash ?? process.env.ADMIN_PASSWORD_HASH
+        if (error || !data) return null
 
-        if (error || !adminEmail || !adminHash) return null
-        if (credentials.email !== adminEmail) return null
-
-        const isValid = await bcrypt.compare(credentials.password, adminHash)
+        const isValid = await bcrypt.compare(credentials.password, data.password_hash)
         if (!isValid) return null
 
-        return { id: '1', email: adminEmail, name: 'Admin' }
+        return { id: data.id, email: data.email, name: 'Admin' }
       },
     }),
   ],

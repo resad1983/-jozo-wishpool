@@ -9,35 +9,33 @@ export async function GET() {
   if (!session) return NextResponse.json({ error: '未授權' }, { status: 401 })
 
   const { data, error } = await supabaseAdmin
-    .from('admin_account')
-    .select('email, updated_at')
-    .eq('id', 1)
-    .single()
+    .from('admin_accounts')
+    .select('id, email, created_at')
+    .order('created_at', { ascending: true })
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ account: data })
+  return NextResponse.json({ accounts: data })
 }
 
-export async function PATCH(req: NextRequest) {
+export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: '未授權' }, { status: 401 })
 
   const { email, password } = await req.json()
-  const updates: Record<string, string> = { updated_at: new Date().toISOString() }
+  if (!email || !password) return NextResponse.json({ error: '請填寫完整' }, { status: 400 })
+  if (password.length < 8) return NextResponse.json({ error: '密碼至少 8 個字元' }, { status: 400 })
 
-  if (email) updates.email = email
-  if (password) {
-    if (password.length < 8) {
-      return NextResponse.json({ error: '密碼至少 8 個字元' }, { status: 400 })
-    }
-    updates.password_hash = await bcrypt.hash(password, 10)
+  const password_hash = await bcrypt.hash(password, 10)
+
+  const { data, error } = await supabaseAdmin
+    .from('admin_accounts')
+    .insert({ email, password_hash })
+    .select('id, email, created_at')
+    .single()
+
+  if (error) {
+    const msg = error.message.includes('unique') ? 'Email 已被使用' : error.message
+    return NextResponse.json({ error: msg }, { status: 500 })
   }
-
-  const { error } = await supabaseAdmin
-    .from('admin_account')
-    .update(updates)
-    .eq('id', 1)
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ success: true })
+  return NextResponse.json({ account: data }, { status: 201 })
 }
