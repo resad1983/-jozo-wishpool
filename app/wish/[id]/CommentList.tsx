@@ -14,7 +14,7 @@ export default function CommentList({
   if (comments.length === 0) {
     return (
       <div className="text-center py-8 text-gray-400 text-sm">
-        還沒有留言，來第一個吧！
+        還沒有人留言，有想法的話來開第一槍吧！
       </div>
     )
   }

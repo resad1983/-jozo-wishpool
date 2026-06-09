@@ -36,7 +36,7 @@ export default async function Home({
       <div className="flex items-center justify-between mb-8">
         <div>
           <h1 className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>Jōzō 揪作許願池</h1>
-          <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>讓想法被看見，讓對的人找到彼此</p>
+          <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>有想做的事？找對的人，一起揪作</p>
         </div>
         <div className="flex items-center gap-2">
           <ThemeToggle />
@@ -51,7 +51,7 @@ export default async function Home({
             href="/wish/new"
             className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity"
           >
-            ✨ 許個願
+            ✨ 發起揪作
           </Link>
         </div>
       </div>
@@ -67,7 +67,7 @@ export default async function Home({
       {wishes.length === 0 ? (
         <div className="text-center py-20 text-gray-400">
           <p className="text-4xl mb-3">🌊</p>
-          <p>還沒有許願，來第一個吧！</p>
+          <p>還沒有揪作，來發起第一個吧！</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

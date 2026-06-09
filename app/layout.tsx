@@ -7,7 +7,7 @@ const geist = Geist({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
   title: "Jōzō 揪作許願池",
-  description: "讓想法被看見，讓對的人找到彼此",
+  description: "有想做的事？找對的人，一起揪作",
 };
 
 export default function RootLayout({

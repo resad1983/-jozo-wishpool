@@ -43,8 +43,8 @@ export default function JoinForm({ wishId }: { wishId: string }) {
   if (done) {
     return (
       <div className="bg-green-50 border border-green-200 rounded-xl p-5 text-center">
-        <p className="text-green-700 font-medium">🎉 感謝你的加入意願！</p>
-        <p className="text-green-600 text-sm mt-1">發起人會看到你的訊息</p>
+        <p className="text-green-700 font-medium">🎉 太好了，已收到你的加入意願！</p>
+        <p className="text-green-600 text-sm mt-1">發起人會看到你的資料，期待你們的相遇 ✨</p>
       </div>
     )
   }
@@ -58,11 +58,11 @@ export default function JoinForm({ wishId }: { wishId: string }) {
           className="w-full py-3 rounded-lg font-medium hover:opacity-80 transition-opacity"
           style={{ background: 'var(--foreground)', color: 'var(--background)' }}
         >
-          🙋 我來！
+          🙋 我想加入！
         </button>
       ) : (
         <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-          <h3 className="font-semibold text-gray-800">填寫加入資料</h3>
+          <h3 className="font-semibold" style={{ color: 'var(--foreground)' }}>告訴發起人你是誰</h3>
           <input name="honeypot" type="text" className="hidden" tabIndex={-1} autoComplete="off" />
 
           <div className="grid grid-cols-2 gap-3">
@@ -101,7 +101,7 @@ export default function JoinForm({ wishId }: { wishId: string }) {
               name="message"
               maxLength={100}
               rows={2}
-              placeholder="你能帶來什麼？"
+              placeholder="簡單說說你的背景，或為什麼對這個揪作感興趣（選填）"
               className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none"
             />
           </div>

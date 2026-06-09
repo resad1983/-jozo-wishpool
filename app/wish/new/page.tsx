@@ -57,8 +57,8 @@ export default function NewWishPage() {
         </Link>
       </div>
 
-      <h1 className="text-2xl font-bold text-gray-900 mb-2">許個願 ✨</h1>
-      <p className="text-gray-500 text-sm mb-8">說出你的想法，找到願意一起的人</p>
+      <h1 className="text-2xl font-bold text-gray-900 mb-2">發起一個揪作 ✨</h1>
+      <p className="text-gray-500 text-sm mb-8">說出你的計畫或想揪的事，讓對的人看見你</p>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6 flex flex-col gap-5">
         {/* Honeypot */}
@@ -72,7 +72,7 @@ export default function NewWishPage() {
             name="title"
             type="text"
             maxLength={50}
-            placeholder="你想做什麼？（最多 50 字）"
+            placeholder="這個揪作的主題是什麼？（最多 50 字）"
             required
             className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
           />
@@ -102,7 +102,7 @@ export default function NewWishPage() {
             name="description"
             rows={5}
             maxLength={500}
-            placeholder="詳細說明你的想法、需要什麼樣的夥伴（最多 500 字）"
+            placeholder="說說這個計畫的背景、你在找什麼樣的人、怎麼參與……（最多 500 字）"
             required
             className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none"
           />
@@ -142,7 +142,7 @@ export default function NewWishPage() {
             type="checkbox"
             className="w-4 h-4 text-indigo-600 rounded"
           />
-          <span className="text-sm text-gray-700">🔥 急需人手</span>
+          <span className="text-sm text-gray-700">🔥 急需夥伴</span>
         </label>
 
         {error && (
@@ -154,7 +154,7 @@ export default function NewWishPage() {
           disabled={loading}
           className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-60"
         >
-          {loading ? '送出中...' : '✨ 送出許願'}
+          {loading ? '送出中...' : '✨ 發起揪作'}
         </button>
       </form>
     </main>

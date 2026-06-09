@@ -84,7 +84,7 @@ export default function CommentForm({ wishId }: { wishId: string }) {
           rows={3}
           maxLength={300}
           required
-          placeholder="說點什麼吧（最多 300 字）"
+          placeholder="對這個揪作有想法或問題嗎？歡迎留言討論（最多 300 字）"
           className="w-full border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300 resize-none"
         />
       </div>
