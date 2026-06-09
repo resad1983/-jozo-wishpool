@@ -13,6 +13,17 @@ export const CATEGORY_LABELS: Record<WishCategory, string> = {
   research: '研究調查',
 }
 
+// 淺色模式：bg / text；深色模式：darkBg / darkText
+export const CATEGORY_COLORS: Record<WishCategory, {
+  bg: string; text: string; darkBg: string; darkText: string
+}> = {
+  event:    { bg: '#fff0e0', text: '#c05c00', darkBg: '#2e1f0a', darkText: '#ffa94d' },
+  collab:   { bg: '#ede9ff', text: '#5b3fd4', darkBg: '#1e1640', darkText: '#b197fc' },
+  media:    { bg: '#e0f7f4', text: '#0a7a6a', darkBg: '#0a2421', darkText: '#63d9c8' },
+  space:    { bg: '#e6f4e6', text: '#2a7a2a', darkBg: '#0e2110', darkText: '#87d987' },
+  research: { bg: '#fde8f0', text: '#b5275a', darkBg: '#2a0f1c', darkText: '#f794b8' },
+}
+
 export interface Wish {
   id: string
   title: string

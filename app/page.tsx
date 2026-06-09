@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import Link from 'next/link'
 import WishCard from '@/components/WishCard'
 import CategoryFilter from '@/components/CategoryFilter'
+import ThemeToggle from '@/components/ThemeToggle'
 import { Wish } from '@/lib/types'
 
 async function getWishes(searchParams: Record<string, string>) {
@@ -22,10 +23,11 @@ async function getWishes(searchParams: Record<string, string>) {
 export default async function Home({
   searchParams,
 }: {
-  searchParams: Record<string, string>
+  searchParams: Promise<Record<string, string>>
 }) {
-  const { wishes, total } = await getWishes(searchParams)
-  const page = parseInt(searchParams.page || '1')
+  const resolvedParams = await searchParams
+  const { wishes, total } = await getWishes(resolvedParams)
+  const page = parseInt(resolvedParams.page || '1')
   const totalPages = Math.ceil(total / 12)
 
   return (
@@ -33,15 +35,18 @@ export default async function Home({
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Jōzō 揪作許願池</h1>
-          <p className="text-gray-500 text-sm mt-1">讓想法被看見，讓對的人找到彼此</p>
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>Jōzō 揪作許願池</h1>
+          <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>讓想法被看見，讓對的人找到彼此</p>
         </div>
-        <Link
-          href="/wish/new"
-          className="bg-indigo-600 text-white px-5 py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors"
-        >
-          ✨ 許個願
-        </Link>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <Link
+            href="/wish/new"
+            className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity"
+          >
+            ✨ 許個願
+          </Link>
+        </div>
       </div>
 
       {/* Filter */}
@@ -71,7 +76,7 @@ export default async function Home({
           {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
             <Link
               key={p}
-              href={`/?${new URLSearchParams({ ...searchParams, page: String(p) }).toString()}`}
+              href={`/?${new URLSearchParams({ ...resolvedParams, page: String(p) }).toString()}`}
               className={`w-9 h-9 flex items-center justify-center rounded-lg text-sm font-medium transition-colors ${
                 p === page
                   ? 'bg-indigo-600 text-white'

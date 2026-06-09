@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
-import { CATEGORY_LABELS } from '@/lib/types'
+import CategoryBadge from '@/components/CategoryBadge'
 import JoinForm from './JoinForm'
 import CommentForm from './CommentForm'
 import CommentList from './CommentList'
@@ -15,9 +15,10 @@ async function getWish(id: string) {
 export default async function WishDetailPage({
   params,
 }: {
-  params: { id: string }
+  params: Promise<{ id: string }>
 }) {
-  const data = await getWish(params.id)
+  const { id } = await params
+  const data = await getWish(id)
   if (!data) notFound()
 
   const { wish, comments, joins } = data
@@ -33,11 +34,12 @@ export default async function WishDetailPage({
       {/* Wish detail */}
       <div className={`bg-white rounded-xl shadow-sm border p-6 mb-6 ${wish.is_urgent ? 'border-l-4 border-l-red-500' : 'border-gray-100'}`}>
         <div className="flex flex-wrap gap-2 mb-3">
-          <span className="text-xs bg-indigo-50 text-indigo-600 px-2 py-0.5 rounded-full font-medium">
-            {CATEGORY_LABELS[wish.category as keyof typeof CATEGORY_LABELS]}
-          </span>
+          <CategoryBadge category={wish.category} />
           {wish.is_urgent && (
-            <span className="text-xs bg-red-50 text-red-500 px-2 py-0.5 rounded-full font-medium">
+            <span
+              style={{ background: 'var(--badge-bg)', color: 'var(--badge-text)' }}
+              className="text-xs px-2 py-0.5 rounded-full font-medium"
+            >
               🔥 急需人手
             </span>
           )}

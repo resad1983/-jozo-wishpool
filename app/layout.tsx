@@ -16,7 +16,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="zh-TW" className="h-full antialiased">
+    <html lang="zh-TW" className="h-full antialiased" suppressHydrationWarning>
       <body className={`${geist.className} min-h-full flex flex-col bg-gray-50`}>
         <Providers>{children}</Providers>
       </body>

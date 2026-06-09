@@ -37,9 +37,14 @@ export default function CategoryFilter() {
           onClick={() => handleClick(tab.value)}
           className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
             current === tab.value
-              ? 'bg-indigo-600 text-white'
-              : 'bg-white text-gray-600 border border-gray-200 hover:border-indigo-300'
+              ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
+              : 'border hover:opacity-80'
           }`}
+          style={current !== tab.value ? {
+            background: 'var(--card)',
+            color: 'var(--foreground)',
+            borderColor: 'var(--border)',
+          } : undefined}
         >
           {tab.label}
         </button>
