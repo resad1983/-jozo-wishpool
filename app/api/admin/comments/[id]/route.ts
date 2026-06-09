@@ -3,25 +3,37 @@ import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
 import { supabaseAdmin } from '@/lib/supabase'
 
+export async function PATCH(
+  req: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  const session = await getServerSession(authOptions)
+  if (!session) return NextResponse.json({ error: '未授權' }, { status: 401 })
+
+  const { id } = await params
+  const { content } = await req.json()
+
+  const { data, error } = await supabaseAdmin
+    .from('comments')
+    .update({ content })
+    .eq('id', id)
+    .select()
+    .single()
+
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+  return NextResponse.json({ comment: data })
+}
+
 export async function DELETE(
   _req: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   const session = await getServerSession(authOptions)
-  if (!session) {
-    return NextResponse.json({ error: '未授權' }, { status: 401 })
-  }
+  if (!session) return NextResponse.json({ error: '未授權' }, { status: 401 })
 
   const { id } = await params
+  const { error } = await supabaseAdmin.from('comments').delete().eq('id', id)
 
-  const { error } = await supabaseAdmin
-    .from('comments')
-    .delete()
-    .eq('id', id)
-
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
-
+  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
 }

@@ -11,17 +11,17 @@ export async function PATCH(
   if (!session) return NextResponse.json({ error: '未授權' }, { status: 401 })
 
   const { id } = await params
-  const body = await req.json()
+  const { slug, name } = await req.json()
 
   const { data, error } = await supabaseAdmin
-    .from('wishes')
-    .update(body)
+    .from('categories')
+    .update({ slug, name })
     .eq('id', id)
     .select()
     .single()
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ wish: data })
+  return NextResponse.json({ category: data })
 }
 
 export async function DELETE(
@@ -32,7 +32,7 @@ export async function DELETE(
   if (!session) return NextResponse.json({ error: '未授權' }, { status: 401 })
 
   const { id } = await params
-  const { error } = await supabaseAdmin.from('wishes').delete().eq('id', id)
+  const { error } = await supabaseAdmin.from('categories').delete().eq('id', id)
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
