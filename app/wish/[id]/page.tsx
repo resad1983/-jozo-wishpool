@@ -36,7 +36,7 @@ export default async function WishDetailPage({
         className="rounded-xl shadow-sm border p-6 mb-4"
         style={{ background: 'var(--card)', borderColor: 'var(--border)' }}
       >
-        <div className="flex flex-wrap gap-2 mb-3">
+        <div className="flex flex-wrap gap-2 mb-2">
           <CategoryBadge category={wish.category} />
           {wish.is_urgent && (
             <span
@@ -47,6 +47,10 @@ export default async function WishDetailPage({
             </span>
           )}
         </div>
+
+        <p className="text-xs mb-4" style={{ color: 'var(--muted)' }}>
+          {new Date(wish.created_at).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' })}
+        </p>
 
         <h1 className="text-xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>{wish.title}</h1>
 
