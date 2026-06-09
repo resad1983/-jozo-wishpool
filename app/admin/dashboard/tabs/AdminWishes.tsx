@@ -7,7 +7,7 @@ interface Category { id: string; slug: string; name: string }
 
 const EMPTY: Partial<Wish> = {
   title: '', category: 'event', description: '',
-  author_name: '', author_social: '', is_urgent: false,
+  author_name: '', author_social: '',
 }
 
 export default function AdminWishes() {
@@ -123,15 +123,7 @@ export default function AdminWishes() {
                 style={{ borderColor: 'var(--border)' }}
               />
             </div>
-            <label className="flex items-center gap-2 text-sm cursor-pointer" style={{ color: 'var(--foreground)' }}>
-              <input
-                type="checkbox"
-                checked={editing.is_urgent || false}
-                onChange={e => setEditing({ ...editing, is_urgent: e.target.checked })}
-              />
-              🔥 急需人手
-            </label>
-            {error && <p className="text-red-500 text-sm">{error}</p>}
+{error && <p className="text-red-500 text-sm">{error}</p>}
             <div className="flex gap-2 justify-end">
               <button
                 onClick={() => { setEditing(null); setIsNew(false) }}
@@ -159,7 +151,7 @@ export default function AdminWishes() {
               style={{ background: 'var(--card)', borderColor: 'var(--border)' }}>
               <div className="flex-1 min-w-0">
                 <p className="font-medium truncate text-sm" style={{ color: 'var(--foreground)' }}>{w.title}</p>
-                <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>by {w.author_name} · {w.category}{w.is_urgent ? ' · 🔥' : ''}</p>
+                <p className="text-xs mt-0.5" style={{ color: 'var(--muted)' }}>by {w.author_name} · {w.category}</p>
               </div>
               <div className="flex gap-2 shrink-0">
                 <button

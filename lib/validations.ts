@@ -13,8 +13,7 @@ export const wishSchema = z.object({
     .refine((v) => !v || v.startsWith('@'), { message: '社群帳號請以 @ 開頭' })
     .optional()
     .or(z.literal('')),
-  is_urgent: z.boolean().optional().default(false),
-  honeypot: z.string().max(0, '').optional(),
+honeypot: z.string().max(0, '').optional(),
 })
 
 export const commentSchema = z.object({

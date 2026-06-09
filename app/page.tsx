@@ -8,7 +8,6 @@ import { Wish } from '@/lib/types'
 async function getWishes(searchParams: Record<string, string>) {
   const params = new URLSearchParams()
   if (searchParams.category) params.set('category', searchParams.category)
-  if (searchParams.urgent) params.set('urgent', searchParams.urgent)
   if (searchParams.page) params.set('page', searchParams.page)
 
   const baseUrl = process.env.NEXTAUTH_URL || 'http://localhost:3000'
@@ -70,7 +69,7 @@ export default async function Home({
           <p>還沒有揪作，來發起第一個吧！</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="flex flex-wrap gap-4">
           {wishes.map((wish) => (
             <WishCard key={wish.id} wish={wish} />
           ))}

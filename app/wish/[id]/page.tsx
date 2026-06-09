@@ -38,14 +38,6 @@ export default async function WishDetailPage({
       >
         <div className="flex flex-wrap gap-2 mb-2">
           <CategoryBadge category={wish.category} />
-          {wish.is_urgent && (
-            <span
-              style={{ background: 'var(--badge-bg)', color: 'var(--badge-text)' }}
-              className="text-xs px-2 py-0.5 rounded-full font-medium"
-            >
-              🔥 急需人手
-            </span>
-          )}
         </div>
 
         <p className="text-xs mb-4" style={{ color: 'var(--muted)' }}>

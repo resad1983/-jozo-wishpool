@@ -1,0 +1,80 @@
+# Jōzō 揪作許願池 — 開發日誌
+日期：2026-06-09
+專案路徑：D:\vibecoding\wishpool-app
+GitHub：https://github.com/resad1983/-jozo-wishpool
+正式網址：https://resad-secondbrain.zeabur.app
+
+---
+
+## 本日完成項目
+
+### 基礎建設
+- 從 0 初始化 Next.js 16 專案（App Router + TypeScript + Tailwind）
+- 安裝套件：@supabase/supabase-js、next-auth、zod、bcryptjs、next-themes
+- 設定 Supabase（PostgreSQL）資料庫，建立 wishes / comments / joins / categories / admin_accounts 五張表
+- 設定 RLS 政策（公開讀取/新增，刪除由 service_role 繞過）
+- 部署至 Zeabur，綁定 GitHub 自動 CI/CD
+
+### 前台功能
+- 揪作列表頁（分類篩選 tab、分頁）
+- 揪作詳情頁（完整內容、加入人列表、留言區）
+- 發起揪作表單（含 honeypot 防垃圾）
+- 加入意願表單
+- 留言表單（預設顯示最新 3 則，可展開全部）
+- 深色 / 淺色模式切換（next-themes，預設淺色）
+- 分類彩色 badge（每個分類各有專屬色，深淺模式各一組配色）
+
+### 管理後台（/admin）
+- 管理員登入（NextAuth Credentials，從 Supabase admin_accounts 驗證）
+- 後台四個 Tab：
+  - 許願：新增 / 編輯 / 刪除
+  - 留言：編輯 / 刪除
+  - 分類：新增 / 編輯 / 刪除
+  - 帳號：多管理員帳號，新增 / 編輯 / 刪除（不能刪自己、至少保留一個）
+
+### UI / 文案
+- 全站 CSS 變數化（--foreground / --background / --card / --border / --muted / --badge-bg / --badge-text）
+- 文案調整為「揪作」語境（發起揪作、我想加入、告訴發起人你是誰…）
+- 登入按鈕（🔑）顯示於首頁 header
+
+---
+
+## 技術規格
+
+| 層級 | 選擇 |
+|------|------|
+| 框架 | Next.js 16（App Router） |
+| 資料庫 | Supabase（PostgreSQL） |
+| 認證 | NextAuth.js（Credentials） |
+| 樣式 | Tailwind CSS + CSS Variables |
+| 主題 | next-themes |
+| 驗證 | Zod v4 |
+| 部署 | Zeabur（自動偵測 Next.js） |
+
+---
+
+## 環境變數（Zeabur 已設定）
+
+- NEXT_PUBLIC_SUPABASE_URL
+- NEXT_PUBLIC_SUPABASE_ANON_KEY
+- SUPABASE_SERVICE_ROLE_KEY
+- NEXTAUTH_SECRET
+- NEXTAUTH_URL=https://resad-secondbrain.zeabur.app
+- ADMIN_EMAIL（已遷移至 Supabase admin_accounts 表，env 僅作 fallback）
+- ADMIN_PASSWORD_HASH（同上）
+
+---
+
+## 待辦 / 未來規劃（Phase 3）
+
+- [ ] Email 通知（新揪作發起時寄信給管理員）
+- [ ] SEO meta tags
+- [ ] Open Graph 分享預覽
+- [ ] 前台分類動態化（目前仍有部分硬碼顏色對應，新增分類後顏色需手動擴充）
+
+---
+
+## 已知限制
+
+- 分類顏色對應（CATEGORY_COLORS）寫在 lib/types.ts，新增分類後需手動加入顏色設定
+- 管理後台許願列表目前只顯示第一頁（12 筆），超過需手動換頁查詢

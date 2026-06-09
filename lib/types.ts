@@ -31,8 +31,7 @@ export interface Wish {
   description: string
   author_name: string
   author_social: string | null
-  is_urgent: boolean
-  created_at: string
+created_at: string
   comment_count?: number
   join_count?: number
 }

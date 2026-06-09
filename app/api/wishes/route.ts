@@ -19,11 +19,7 @@ export async function GET(req: NextRequest) {
   if (category && category !== 'all') {
     query = query.eq('category', category)
   }
-  if (urgent === 'true') {
-    query = query.eq('is_urgent', true)
-  }
-
-  const { data: wishes, error, count } = await query
+const { data: wishes, error, count } = await query
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 })

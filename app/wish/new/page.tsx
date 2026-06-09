@@ -24,8 +24,7 @@ export default function NewWishPage() {
       description: (form.elements.namedItem('description') as HTMLTextAreaElement).value,
       author_name: (form.elements.namedItem('author_name') as HTMLInputElement).value,
       author_social: (form.elements.namedItem('author_social') as HTMLInputElement).value,
-      is_urgent: (form.elements.namedItem('is_urgent') as HTMLInputElement).checked,
-      honeypot: (form.elements.namedItem('honeypot') as HTMLInputElement).value,
+honeypot: (form.elements.namedItem('honeypot') as HTMLInputElement).value,
     }
 
     try {
@@ -136,16 +135,7 @@ export default function NewWishPage() {
           </div>
         </div>
 
-        <label className="flex items-center gap-2 cursor-pointer">
-          <input
-            name="is_urgent"
-            type="checkbox"
-            className="w-4 h-4 text-indigo-600 rounded"
-          />
-          <span className="text-sm text-gray-700">🔥 急需夥伴</span>
-        </label>
-
-        {error && (
+{error && (
           <p className="text-red-500 text-sm bg-red-50 px-3 py-2 rounded-lg">{error}</p>
         )}
 
