@@ -42,7 +42,8 @@ export default function CommentForm({ wishId }: { wishId: string }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 flex flex-col gap-4">
+    <form onSubmit={handleSubmit} className="rounded-xl shadow-sm border p-5 flex flex-col gap-4"
+      style={{ background: 'var(--card)', borderColor: 'var(--border)' }}>
       <h3 className="font-semibold text-gray-800">留言</h3>
       <input name="honeypot" type="text" className="hidden" tabIndex={-1} autoComplete="off" />
 
@@ -93,7 +94,8 @@ export default function CommentForm({ wishId }: { wishId: string }) {
       <button
         type="submit"
         disabled={loading}
-        className="bg-gray-800 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-gray-900 transition-colors disabled:opacity-60"
+        className="py-2.5 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity disabled:opacity-60"
+      style={{ background: 'var(--foreground)', color: 'var(--background)' }}
       >
         {loading ? '送出中...' : '送出留言'}
       </button>

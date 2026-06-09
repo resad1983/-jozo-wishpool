@@ -32,9 +32,10 @@ export default function CommentList({
       </h2>
       <div className="flex flex-col gap-3">
         {visible.map((c) => (
-          <div key={c.id} className="bg-white dark:bg-gray-800 rounded-xl border border-gray-100 dark:border-gray-700 px-4 py-3">
+          <div key={c.id} className="rounded-xl border px-4 py-3"
+            style={{ background: 'var(--card)', borderColor: 'var(--border)' }}>
             <div className="flex items-center gap-2 mb-1.5">
-              <span className="font-medium text-sm text-gray-800 dark:text-gray-200">{c.author_name}</span>
+              <span className="font-medium text-sm" style={{ color: 'var(--foreground)' }}>{c.author_name}</span>
               {c.author_social && (
                 <span className="text-xs text-indigo-500">{c.author_social}</span>
               )}
@@ -42,7 +43,7 @@ export default function CommentList({
                 {new Date(c.created_at).toLocaleDateString('zh-TW')}
               </span>
             </div>
-            <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">{c.content}</p>
+            <p className="text-sm leading-relaxed" style={{ color: 'var(--foreground)' }}>{c.content}</p>
           </div>
         ))}
       </div>

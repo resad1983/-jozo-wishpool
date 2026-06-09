@@ -26,13 +26,16 @@ export default async function WishDetailPage({
   return (
     <main className="max-w-2xl mx-auto px-4 py-10">
       <div className="mb-6">
-        <Link href="/" className="text-sm text-gray-500 hover:text-gray-700">
+        <Link href="/" className="text-sm hover:opacity-70 transition-opacity" style={{ color: 'var(--muted)' }}>
           ← 回許願池
         </Link>
       </div>
 
       {/* Wish detail */}
-      <div className={`bg-white rounded-xl shadow-sm border p-6 mb-6 ${wish.is_urgent ? 'border-l-4 border-l-red-500' : 'border-gray-100'}`}>
+      <div
+        className="rounded-xl shadow-sm border p-6 mb-4"
+        style={{ background: 'var(--card)', borderColor: 'var(--border)' }}
+      >
         <div className="flex flex-wrap gap-2 mb-3">
           <CategoryBadge category={wish.category} />
           {wish.is_urgent && (
@@ -45,28 +48,34 @@ export default async function WishDetailPage({
           )}
         </div>
 
-        <h1 className="text-xl font-bold text-gray-900 mb-4">{wish.title}</h1>
+        <h1 className="text-xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>{wish.title}</h1>
 
-        <p className="text-gray-700 leading-relaxed whitespace-pre-wrap mb-6">{wish.description}</p>
+        <p className="leading-relaxed whitespace-pre-wrap mb-6" style={{ color: 'var(--foreground)' }}>
+          {wish.description}
+        </p>
 
-        <div className="text-sm text-gray-500 border-t border-gray-50 pt-4">
+        <div className="text-sm border-t pt-4" style={{ borderColor: 'var(--border)', color: 'var(--muted)' }}>
           <span>發起人：{wish.author_name}</span>
           {wish.author_social && (
-            <span className="ml-3 text-indigo-500">{wish.author_social}</span>
+            <span className="ml-3" style={{ color: 'var(--badge-text)' }}>{wish.author_social}</span>
           )}
         </div>
       </div>
 
       {/* 加入人 */}
       {joins.length > 0 && (
-        <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5 mb-4">
-          <h2 className="font-semibold text-gray-800 mb-3">🙋 想加入的人（{joins.length}）</h2>
+        <div className="rounded-xl shadow-sm border p-5 mb-4"
+          style={{ background: 'var(--card)', borderColor: 'var(--border)' }}>
+          <h2 className="font-semibold mb-3" style={{ color: 'var(--foreground)' }}>
+            🙋 想加入的人（{joins.length}）
+          </h2>
           <div className="flex flex-col gap-2">
             {joins.map((j: { id: string; name: string; social?: string; message?: string }) => (
-              <div key={j.id} className="text-sm text-gray-600 bg-gray-50 rounded-lg px-3 py-2">
+              <div key={j.id} className="text-sm rounded-lg px-3 py-2"
+                style={{ background: 'var(--background)', color: 'var(--foreground)' }}>
                 <span className="font-medium">{j.name}</span>
-                {j.social && <span className="text-indigo-500 ml-2">{j.social}</span>}
-                {j.message && <p className="text-gray-500 mt-0.5">{j.message}</p>}
+                {j.social && <span className="ml-2" style={{ color: 'var(--badge-text)' }}>{j.social}</span>}
+                {j.message && <p className="mt-0.5" style={{ color: 'var(--muted)' }}>{j.message}</p>}
               </div>
             ))}
           </div>

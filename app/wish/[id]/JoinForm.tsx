@@ -50,11 +50,13 @@ export default function JoinForm({ wishId }: { wishId: string }) {
   }
 
   return (
-    <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-5">
+    <div className="rounded-xl shadow-sm border p-5"
+      style={{ background: 'var(--card)', borderColor: 'var(--border)' }}>
       {!open ? (
         <button
           onClick={() => setOpen(true)}
-          className="w-full bg-indigo-600 text-white py-3 rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+          className="w-full py-3 rounded-lg font-medium hover:opacity-80 transition-opacity"
+          style={{ background: 'var(--foreground)', color: 'var(--background)' }}
         >
           🙋 我來！
         </button>
@@ -112,14 +114,16 @@ export default function JoinForm({ wishId }: { wishId: string }) {
             <button
               type="button"
               onClick={() => setOpen(false)}
-              className="flex-1 border border-gray-200 text-gray-600 py-2.5 rounded-lg text-sm hover:bg-gray-50 transition-colors"
+              className="flex-1 py-2.5 rounded-lg text-sm border hover:opacity-70 transition-opacity"
+              style={{ borderColor: 'var(--border)', color: 'var(--muted)' }}
             >
               取消
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 bg-indigo-600 text-white py-2.5 rounded-lg text-sm font-medium hover:bg-indigo-700 transition-colors disabled:opacity-60"
+              className="flex-1 py-2.5 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity disabled:opacity-60"
+              style={{ background: 'var(--foreground)', color: 'var(--background)' }}
             >
               {loading ? '送出中...' : '確認加入'}
             </button>
