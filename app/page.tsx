@@ -41,6 +41,13 @@ export default async function Home({
         <div className="flex items-center gap-2">
           <ThemeToggle />
           <Link
+            href="/admin"
+            className="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400 text-sm"
+            title="管理員登入"
+          >
+            🔑
+          </Link>
+          <Link
             href="/wish/new"
             className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity"
           >
