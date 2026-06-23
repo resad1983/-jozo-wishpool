@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { sql } from '@/lib/db'
 import { commentSchema } from '@/lib/validations'
 
 export async function POST(
@@ -14,24 +14,17 @@ export async function POST(
 
   const result = commentSchema.safeParse(body)
   if (!result.success) {
-    return NextResponse.json(
-      { error: result.error.issues[0].message },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 })
   }
 
   const { honeypot: _, ...data } = result.data
   const { id } = await params
 
-  const { data: comment, error } = await supabase
-    .from('comments')
-    .insert({ ...data, wish_id: id })
-    .select()
-    .single()
+  const rows = await sql`
+    INSERT INTO comments (wish_id, author_name, author_social, content)
+    VALUES (${id}, ${data.author_name}, ${data.author_social ?? null}, ${data.content})
+    RETURNING *
+  `
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
-
-  return NextResponse.json({ comment }, { status: 201 })
+  return NextResponse.json({ comment: rows[0] }, { status: 201 })
 }

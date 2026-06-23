@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { supabaseAdmin } from '@/lib/supabase'
+import { sql } from '@/lib/db'
 
 export async function PATCH(
   req: NextRequest,
@@ -11,17 +11,22 @@ export async function PATCH(
   if (!session) return NextResponse.json({ error: '未授權' }, { status: 401 })
 
   const { id } = await params
-  const body = await req.json()
+  const { title, category, description, author_name, author_social } = await req.json()
 
-  const { data, error } = await supabaseAdmin
-    .from('wishes')
-    .update(body)
-    .eq('id', id)
-    .select()
-    .single()
+  const rows = await sql`
+    UPDATE wishes
+    SET
+      title = COALESCE(${title ?? null}, title),
+      category = COALESCE(${category ?? null}, category),
+      description = COALESCE(${description ?? null}, description),
+      author_name = COALESCE(${author_name ?? null}, author_name),
+      author_social = COALESCE(${author_social ?? null}, author_social)
+    WHERE id = ${id}
+    RETURNING *
+  `
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ wish: data })
+  if (!rows[0]) return NextResponse.json({ error: '找不到' }, { status: 404 })
+  return NextResponse.json({ wish: rows[0] })
 }
 
 export async function DELETE(
@@ -32,8 +37,7 @@ export async function DELETE(
   if (!session) return NextResponse.json({ error: '未授權' }, { status: 401 })
 
   const { id } = await params
-  const { error } = await supabaseAdmin.from('wishes').delete().eq('id', id)
+  await sql`DELETE FROM wishes WHERE id = ${id}`
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
 }

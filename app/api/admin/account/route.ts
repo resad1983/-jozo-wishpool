@@ -1,20 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { supabaseAdmin } from '@/lib/supabase'
+import { sql } from '@/lib/db'
 import bcrypt from 'bcryptjs'
 
 export async function GET() {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: '未授權' }, { status: 401 })
 
-  const { data, error } = await supabaseAdmin
-    .from('admin_accounts')
-    .select('id, email, created_at')
-    .order('created_at', { ascending: true })
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ accounts: data })
+  const accounts = await sql`
+    SELECT id, email, created_at FROM admin_accounts ORDER BY created_at ASC
+  `
+  return NextResponse.json({ accounts })
 }
 
 export async function POST(req: NextRequest) {
@@ -27,15 +24,14 @@ export async function POST(req: NextRequest) {
 
   const password_hash = await bcrypt.hash(password, 10)
 
-  const { data, error } = await supabaseAdmin
-    .from('admin_accounts')
-    .insert({ email, password_hash })
-    .select('id, email, created_at')
-    .single()
-
-  if (error) {
-    const msg = error.message.includes('unique') ? 'Email 已被使用' : error.message
-    return NextResponse.json({ error: msg }, { status: 500 })
+  try {
+    const rows = await sql`
+      INSERT INTO admin_accounts (email, password_hash)
+      VALUES (${email}, ${password_hash})
+      RETURNING id, email, created_at
+    `
+    return NextResponse.json({ account: rows[0] }, { status: 201 })
+  } catch {
+    return NextResponse.json({ error: 'Email 已被使用' }, { status: 500 })
   }
-  return NextResponse.json({ account: data }, { status: 201 })
 }

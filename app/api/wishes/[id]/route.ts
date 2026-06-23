@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { sql } from '@/lib/db'
 
 export async function GET(
   _req: NextRequest,
@@ -7,23 +7,15 @@ export async function GET(
 ) {
   const { id } = await params
 
-  const [wishRes, commentsRes, joinsRes] = await Promise.all([
-    supabase.from('wishes').select('*').eq('id', id).single(),
-    supabase
-      .from('comments')
-      .select('*')
-      .eq('wish_id', id)
-      .order('created_at', { ascending: true }),
-    supabase.from('joins').select('*').eq('wish_id', id),
+  const [wishes, comments, joins] = await Promise.all([
+    sql`SELECT * FROM wishes WHERE id = ${id} LIMIT 1`,
+    sql`SELECT * FROM comments WHERE wish_id = ${id} ORDER BY created_at ASC`,
+    sql`SELECT * FROM joins WHERE wish_id = ${id} ORDER BY created_at ASC`,
   ])
 
-  if (wishRes.error || !wishRes.data) {
+  if (!wishes[0]) {
     return NextResponse.json({ error: '找不到這個許願' }, { status: 404 })
   }
 
-  return NextResponse.json({
-    wish: wishRes.data,
-    comments: commentsRes.data || [],
-    joins: joinsRes.data || [],
-  })
+  return NextResponse.json({ wish: wishes[0], comments, joins })
 }

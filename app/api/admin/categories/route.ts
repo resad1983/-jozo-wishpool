@@ -1,16 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { supabase, supabaseAdmin } from '@/lib/supabase'
+import { sql } from '@/lib/db'
 
 export async function GET() {
-  const { data, error } = await supabase
-    .from('categories')
-    .select('*')
-    .order('created_at', { ascending: true })
-
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ categories: data })
+  const categories = await sql`SELECT * FROM categories ORDER BY created_at ASC`
+  return NextResponse.json({ categories })
 }
 
 export async function POST(req: NextRequest) {
@@ -20,12 +15,9 @@ export async function POST(req: NextRequest) {
   const { slug, name } = await req.json()
   if (!slug || !name) return NextResponse.json({ error: '請填寫完整' }, { status: 400 })
 
-  const { data, error } = await supabaseAdmin
-    .from('categories')
-    .insert({ slug, name })
-    .select()
-    .single()
+  const rows = await sql`
+    INSERT INTO categories (slug, name) VALUES (${slug}, ${name}) RETURNING *
+  `
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ category: data }, { status: 201 })
+  return NextResponse.json({ category: rows[0] }, { status: 201 })
 }

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { supabase } from '@/lib/supabase'
+import { sql } from '@/lib/db'
 import { joinSchema } from '@/lib/validations'
 
 export async function POST(
@@ -14,24 +14,17 @@ export async function POST(
 
   const result = joinSchema.safeParse(body)
   if (!result.success) {
-    return NextResponse.json(
-      { error: result.error.issues[0].message },
-      { status: 400 }
-    )
+    return NextResponse.json({ error: result.error.issues[0].message }, { status: 400 })
   }
 
   const { honeypot: _, ...data } = result.data
   const { id } = await params
 
-  const { data: join, error } = await supabase
-    .from('joins')
-    .insert({ ...data, wish_id: id })
-    .select()
-    .single()
+  const rows = await sql`
+    INSERT INTO joins (wish_id, name, social, message)
+    VALUES (${id}, ${data.name}, ${data.social ?? null}, ${data.message ?? null})
+    RETURNING *
+  `
 
-  if (error) {
-    return NextResponse.json({ error: error.message }, { status: 500 })
-  }
-
-  return NextResponse.json({ join }, { status: 201 })
+  return NextResponse.json({ join: rows[0] }, { status: 201 })
 }

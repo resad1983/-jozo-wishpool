@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '@/lib/auth'
-import { supabaseAdmin } from '@/lib/supabase'
+import { sql } from '@/lib/db'
 
 export async function PATCH(
   req: NextRequest,
@@ -13,15 +13,12 @@ export async function PATCH(
   const { id } = await params
   const { content } = await req.json()
 
-  const { data, error } = await supabaseAdmin
-    .from('comments')
-    .update({ content })
-    .eq('id', id)
-    .select()
-    .single()
+  const rows = await sql`
+    UPDATE comments SET content = ${content} WHERE id = ${id} RETURNING *
+  `
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
-  return NextResponse.json({ comment: data })
+  if (!rows[0]) return NextResponse.json({ error: '找不到' }, { status: 404 })
+  return NextResponse.json({ comment: rows[0] })
 }
 
 export async function DELETE(
@@ -32,8 +29,7 @@ export async function DELETE(
   if (!session) return NextResponse.json({ error: '未授權' }, { status: 401 })
 
   const { id } = await params
-  const { error } = await supabaseAdmin.from('comments').delete().eq('id', id)
+  await sql`DELETE FROM comments WHERE id = ${id}`
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 })
   return NextResponse.json({ success: true })
 }
