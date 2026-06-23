@@ -2,18 +2,13 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { useTheme } from 'next-themes'
 import { Category, COLOR_PALETTE } from '@/lib/types'
 
 export default function CategoryFilter() {
   const router = useRouter()
   const searchParams = useSearchParams()
-  const { resolvedTheme } = useTheme()
   const [categories, setCategories] = useState<Category[]>([])
-  const [mounted, setMounted] = useState(false)
   const currentCategory = searchParams.get('category') || 'all'
-
-  useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
     fetch('/api/categories')
@@ -32,13 +27,11 @@ export default function CategoryFilter() {
     router.push(`/?${params.toString()}`)
   }
 
-  const isDark = mounted && resolvedTheme === 'dark'
-
   function activeStyle(color: string) {
     const p = COLOR_PALETTE[color] ?? COLOR_PALETTE.orange
     return {
-      background: isDark ? p.darkBg : p.bg,
-      color: isDark ? p.darkText : p.text,
+      background: p.swatch,
+      color: '#ffffff',
       borderColor: 'transparent',
     }
   }
