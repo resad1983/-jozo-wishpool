@@ -18,7 +18,7 @@ export default function WishCard({ wish }: WishCardProps) {
         <div className="p-5 flex flex-col gap-3 flex-1">
           {/* 頂部 badges */}
           <div className="flex items-center">
-            <CategoryBadge category={wish.category} />
+            <CategoryBadge name={wish.category_name} color={wish.category_color} />
           </div>
 
           {/* 日期 */}

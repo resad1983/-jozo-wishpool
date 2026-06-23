@@ -12,11 +12,11 @@ export async function POST(req: NextRequest) {
   const session = await getServerSession(authOptions)
   if (!session) return NextResponse.json({ error: '未授權' }, { status: 401 })
 
-  const { slug, name } = await req.json()
+  const { slug, name, color } = await req.json()
   if (!slug || !name) return NextResponse.json({ error: '請填寫完整' }, { status: 400 })
 
   const rows = await sql`
-    INSERT INTO categories (slug, name) VALUES (${slug}, ${name}) RETURNING *
+    INSERT INTO categories (slug, name, color) VALUES (${slug}, ${name}, ${color ?? 'orange'}) RETURNING *
   `
 
   return NextResponse.json({ category: rows[0] }, { status: 201 })

@@ -15,24 +15,30 @@ export async function GET(req: NextRequest) {
     hasCategory
       ? sql`
           SELECT w.*,
-            COUNT(DISTINCT c.id)::int AS comment_count,
-            COUNT(DISTINCT j.id)::int AS join_count
+            COALESCE(c.name, w.category) AS category_name,
+            COALESCE(c.color, 'orange')  AS category_color,
+            COUNT(DISTINCT cm.id)::int   AS comment_count,
+            COUNT(DISTINCT j.id)::int    AS join_count
           FROM wishes w
-          LEFT JOIN comments c ON c.wish_id = w.id
-          LEFT JOIN joins j ON j.wish_id = w.id
+          LEFT JOIN categories c  ON c.slug = w.category
+          LEFT JOIN comments cm   ON cm.wish_id = w.id
+          LEFT JOIN joins j       ON j.wish_id = w.id
           WHERE w.category = ${category}
-          GROUP BY w.id
+          GROUP BY w.id, c.name, c.color
           ORDER BY w.created_at DESC
           LIMIT ${limit} OFFSET ${offset}
         `
       : sql`
           SELECT w.*,
-            COUNT(DISTINCT c.id)::int AS comment_count,
-            COUNT(DISTINCT j.id)::int AS join_count
+            COALESCE(c.name, w.category) AS category_name,
+            COALESCE(c.color, 'orange')  AS category_color,
+            COUNT(DISTINCT cm.id)::int   AS comment_count,
+            COUNT(DISTINCT j.id)::int    AS join_count
           FROM wishes w
-          LEFT JOIN comments c ON c.wish_id = w.id
-          LEFT JOIN joins j ON j.wish_id = w.id
-          GROUP BY w.id
+          LEFT JOIN categories c  ON c.slug = w.category
+          LEFT JOIN comments cm   ON cm.wish_id = w.id
+          LEFT JOIN joins j       ON j.wish_id = w.id
+          GROUP BY w.id, c.name, c.color
           ORDER BY w.created_at DESC
           LIMIT ${limit} OFFSET ${offset}
         `,

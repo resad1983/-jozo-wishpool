@@ -1,16 +1,19 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { CATEGORY_LABELS, WishCategory } from '@/lib/types'
-
-const CATEGORIES = Object.entries(CATEGORY_LABELS) as [WishCategory, string][]
+import { Category } from '@/lib/types'
 
 export default function NewWishPage() {
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+  const [categories, setCategories] = useState<Category[]>([])
+
+  useEffect(() => {
+    fetch('/api/categories').then(r => r.json()).then(d => setCategories(d.categories || []))
+  }, [])
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
@@ -87,8 +90,8 @@ honeypot: (form.elements.namedItem('honeypot') as HTMLInputElement).value,
             className="w-full border border-gray-200 rounded-lg px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-300"
           >
             <option value="">請選擇分類</option>
-            {CATEGORIES.map(([value, label]) => (
-              <option key={value} value={value}>{label}</option>
+            {categories.map(cat => (
+              <option key={cat.slug} value={cat.slug}>{cat.name}</option>
             ))}
           </select>
         </div>

@@ -8,7 +8,15 @@ export async function GET(
   const { id } = await params
 
   const [wishes, comments, joins] = await Promise.all([
-    sql`SELECT * FROM wishes WHERE id = ${id} LIMIT 1`,
+    sql`
+      SELECT w.*,
+        COALESCE(c.name, w.category) AS category_name,
+        COALESCE(c.color, 'orange')  AS category_color
+      FROM wishes w
+      LEFT JOIN categories c ON c.slug = w.category
+      WHERE w.id = ${id}
+      LIMIT 1
+    `,
     sql`SELECT * FROM comments WHERE wish_id = ${id} ORDER BY created_at ASC`,
     sql`SELECT * FROM joins WHERE wish_id = ${id} ORDER BY created_at ASC`,
   ])

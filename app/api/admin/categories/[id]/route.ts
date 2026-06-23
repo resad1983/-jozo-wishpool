@@ -11,10 +11,10 @@ export async function PATCH(
   if (!session) return NextResponse.json({ error: '未授權' }, { status: 401 })
 
   const { id } = await params
-  const { slug, name } = await req.json()
+  const { slug, name, color } = await req.json()
 
   const rows = await sql`
-    UPDATE categories SET slug = ${slug}, name = ${name} WHERE id = ${id} RETURNING *
+    UPDATE categories SET slug = ${slug}, name = ${name}, color = ${color ?? 'orange'} WHERE id = ${id} RETURNING *
   `
 
   if (!rows[0]) return NextResponse.json({ error: '找不到' }, { status: 404 })

@@ -1,22 +1,27 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-
-const CATEGORY_TABS = [
-  { value: 'all', label: '全部' },
-  { value: 'event', label: '活動策劃' },
-  { value: 'collab', label: '協作計畫' },
-  { value: 'media', label: '內容媒體' },
-  { value: 'space', label: '空間場域' },
-  { value: 'research', label: '研究調查' },
-]
+import { useEffect, useState } from 'react'
+import { useTheme } from 'next-themes'
+import { Category, COLOR_PALETTE } from '@/lib/types'
 
 export default function CategoryFilter() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const { resolvedTheme } = useTheme()
+  const [categories, setCategories] = useState<Category[]>([])
+  const [mounted, setMounted] = useState(false)
   const currentCategory = searchParams.get('category') || 'all'
 
-  function handleCategoryClick(value: string) {
+  useEffect(() => { setMounted(true) }, [])
+
+  useEffect(() => {
+    fetch('/api/categories')
+      .then(r => r.json())
+      .then(d => setCategories(d.categories || []))
+  }, [])
+
+  function handleClick(value: string) {
     const params = new URLSearchParams(searchParams.toString())
     if (value === 'all') {
       params.delete('category')
@@ -27,24 +32,45 @@ export default function CategoryFilter() {
     router.push(`/?${params.toString()}`)
   }
 
+  const isDark = mounted && resolvedTheme === 'dark'
+
+  function activeStyle(color: string) {
+    const p = COLOR_PALETTE[color] ?? COLOR_PALETTE.orange
+    return {
+      background: isDark ? p.darkBg : p.bg,
+      color: isDark ? p.darkText : p.text,
+      borderColor: 'transparent',
+    }
+  }
+
+  const neutralStyle = {
+    background: 'var(--card)',
+    color: 'var(--foreground)',
+    borderColor: 'var(--border)',
+  }
+
   return (
     <div className="flex flex-wrap gap-2">
-      {CATEGORY_TABS.map((tab) => (
+      {/* 全部 tab */}
+      <button
+        onClick={() => handleClick('all')}
+        className="px-4 py-1.5 rounded-full text-sm font-medium border transition-colors hover:opacity-80"
+        style={currentCategory === 'all'
+          ? { background: 'var(--foreground)', color: 'var(--background)', borderColor: 'transparent' }
+          : neutralStyle
+        }
+      >
+        全部
+      </button>
+
+      {categories.map(cat => (
         <button
-          key={tab.value}
-          onClick={() => handleCategoryClick(tab.value)}
-          className={`px-4 py-1.5 rounded-full text-sm font-medium transition-colors ${
-            currentCategory === tab.value
-              ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900'
-              : 'border hover:opacity-80'
-          }`}
-          style={currentCategory !== tab.value ? {
-            background: 'var(--card)',
-            color: 'var(--foreground)',
-            borderColor: 'var(--border)',
-          } : undefined}
+          key={cat.slug}
+          onClick={() => handleClick(cat.slug)}
+          className="px-4 py-1.5 rounded-full text-sm font-medium border transition-colors hover:opacity-80"
+          style={currentCategory === cat.slug ? activeStyle(cat.color) : neutralStyle}
         >
-          {tab.label}
+          {cat.name}
         </button>
       ))}
     </div>

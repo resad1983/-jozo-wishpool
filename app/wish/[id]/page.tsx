@@ -37,7 +37,7 @@ export default async function WishDetailPage({
         style={{ background: 'var(--card)', borderColor: 'var(--border)' }}
       >
         <div className="flex flex-wrap gap-2 mb-2">
-          <CategoryBadge category={wish.category} />
+          <CategoryBadge name={wish.category_name} color={wish.category_color} />
         </div>
 
         <p className="text-xs mb-4" style={{ color: 'var(--muted)' }}>
