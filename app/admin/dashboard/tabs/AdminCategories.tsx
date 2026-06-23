@@ -1,8 +1,14 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import CategoryBadge from '@/components/CategoryBadge'
+import { WishCategory, CATEGORY_COLORS } from '@/lib/types'
 
 interface Category { id: string; slug: string; name: string }
+
+function isKnownCategory(slug: string): slug is WishCategory {
+  return slug in CATEGORY_COLORS
+}
 
 export default function AdminCategories() {
   const [categories, setCategories] = useState<Category[]>([])
@@ -131,9 +137,12 @@ export default function AdminCategories() {
                 />
               </div>
             ) : (
-              <div className="flex-1">
-                <span className="font-medium text-sm" style={{ color: 'var(--foreground)' }}>{c.name}</span>
-                <span className="text-xs ml-2" style={{ color: 'var(--muted)' }}>{c.slug}</span>
+              <div className="flex-1 flex items-center gap-3">
+                {isKnownCategory(c.slug)
+                  ? <CategoryBadge category={c.slug} />
+                  : <span className="text-xs px-2 py-0.5 rounded-full font-medium bg-gray-100 text-gray-600">{c.name}</span>
+                }
+                <span className="text-xs" style={{ color: 'var(--muted)' }}>{c.slug}</span>
               </div>
             )}
             <div className="flex gap-2 shrink-0">
