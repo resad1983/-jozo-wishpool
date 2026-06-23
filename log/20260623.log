@@ -1,0 +1,79 @@
+# Jōzō 揪作許願池 — 開發日誌
+日期：2026-06-23
+專案路徑：D:\vibecoding\wishpool-app
+GitHub：https://github.com/resad1983/-jozo-wishpool
+正式網址：https://resad-secondbrain.zeabur.app
+
+---
+
+## 本日完成項目
+
+### 資料庫遷移：Supabase → Neon
+
+**原因：** Supabase 免費方案會定期暫停不活躍的資料庫，影響正式網站可用性。
+
+**遷移目標：** Neon（Serverless PostgreSQL），免費方案不暫停資料庫，schema 與 PostgreSQL 完全相容。
+
+#### 變更內容
+
+- 移除 `@supabase/supabase-js`，安裝 `@neondatabase/serverless`
+- 新增 `lib/db.ts`，以 `neon()` tagged template literal 取代 Supabase client
+- 移除 `lib/supabase.ts`
+- 改寫 `lib/auth.ts`，管理員驗證改用 raw SQL
+- 改寫所有 API routes（共 12 個）為 raw SQL 查詢：
+  - `app/api/wishes/route.ts`
+  - `app/api/wishes/[id]/route.ts`
+  - `app/api/wishes/[id]/comments/route.ts`
+  - `app/api/wishes/[id]/join/route.ts`
+  - `app/api/admin/wishes/[id]/route.ts`
+  - `app/api/admin/wishes/[id]/urgent/route.ts`
+  - `app/api/admin/comments/route.ts`
+  - `app/api/admin/comments/[id]/route.ts`
+  - `app/api/admin/categories/route.ts`
+  - `app/api/admin/categories/[id]/route.ts`
+  - `app/api/admin/account/route.ts`
+  - `app/api/admin/account/[id]/route.ts`
+- 更新 Zeabur 環境變數（移除三個 Supabase 變數，加入 `DATABASE_URL`）
+
+#### 新資料庫 Schema（在 Neon 建立）
+
+五張資料表：`wishes` / `comments` / `joins` / `categories` / `admin_accounts`
+使用 `pgcrypto` 的 `gen_random_uuid()` 產生 UUID 主鍵，cascade delete 維持資料一致性。
+
+#### 管理員帳號
+
+- Email：resad1983@hotmail.com
+- 密碼：以 bcrypt hash 儲存於 admin_accounts 表
+
+### 測試資料建立
+
+建立 9 筆示範揪作（含留言和加入紀錄），仿照原 Supabase 資料庫內容：
+- 研究調查 × 1、協作計畫 × 1、空間場域 × 1、內容媒體 × 3、活動策劃 × 3
+- 共 23 則留言，2 筆加入記錄
+
+---
+
+## 環境變數（Zeabur 目前設定）
+
+| 變數 | 說明 |
+|------|------|
+| DATABASE_URL | Neon Pooled Connection String |
+| NEXTAUTH_SECRET | Session 加密金鑰 |
+| NEXTAUTH_URL | https://resad-secondbrain.zeabur.app |
+
+---
+
+## Commit 紀錄
+
+| Hash | 說明 |
+|------|------|
+| 85f181e | feat: migrate database from Supabase to Neon |
+| 6bb900c | chore: remove supabase.ts after migration to Neon |
+
+---
+
+## 已知限制（延續）
+
+- 分類顏色（CATEGORY_COLORS）寫在 `lib/types.ts`，新增分類後顏色需手動擴充
+- 後台許願列表目前只顯示第一頁（12 筆）
+- `is_urgent` 欄位於 Neon schema 尚未建立（原 Zeabur urgent route 存在但暫不啟用）
