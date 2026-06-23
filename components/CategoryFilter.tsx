@@ -41,6 +41,13 @@ export default function CategoryFilter() {
       : { background: p.swatch,  color: '#ffffff',  borderColor: 'transparent' }
   }
 
+  function inactiveStyle(color: string) {
+    const p = COLOR_PALETTE[color] ?? COLOR_PALETTE.orange
+    return isDark
+      ? { background: p.darkBg, color: p.darkText, borderColor: 'transparent', opacity: 0.6 }
+      : { background: p.bg,     color: p.text,     borderColor: 'transparent' }
+  }
+
   const neutralStyle = {
     background: 'var(--card)',
     color: 'var(--foreground)',
@@ -66,7 +73,7 @@ export default function CategoryFilter() {
           key={cat.slug}
           onClick={() => handleClick(cat.slug)}
           className="px-4 py-1.5 rounded-full text-sm font-medium border transition-colors hover:opacity-80"
-          style={currentCategory === cat.slug ? activeStyle(cat.color) : neutralStyle}
+          style={currentCategory === cat.slug ? activeStyle(cat.color) : inactiveStyle(cat.color)}
         >
           {cat.name}
         </button>
