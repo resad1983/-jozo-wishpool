@@ -34,7 +34,7 @@ export default async function Home({
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>Jōzō 揪作許願池</h1>
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>臺中Jōzō - 揪作許願池</h1>
           <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>有想做的事？找對的人，一起揪作</p>
         </div>
         <div className="flex items-center gap-2">

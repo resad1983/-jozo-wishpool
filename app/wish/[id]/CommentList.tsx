@@ -39,9 +39,6 @@ export default function CommentList({
               {c.author_social && (
                 <span className="text-xs text-indigo-500">{c.author_social}</span>
               )}
-              <span className="text-xs text-gray-400 ml-auto">
-                {new Date(c.created_at).toLocaleDateString('zh-TW')}
-              </span>
             </div>
             <p className="text-sm leading-relaxed" style={{ color: 'var(--foreground)' }}>{c.content}</p>
           </div>

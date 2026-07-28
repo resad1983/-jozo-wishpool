@@ -40,11 +40,7 @@ export default async function WishDetailPage({
           <CategoryBadge name={wish.category_name} color={wish.category_color} />
         </div>
 
-        <p className="text-xs mb-4" style={{ color: 'var(--muted)' }}>
-          {new Date(wish.created_at).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' })}
-        </p>
-
-        <h1 className="text-xl font-bold mb-4" style={{ color: 'var(--foreground)' }}>{wish.title}</h1>
+        <h1 className="text-xl font-bold mb-4 mt-2" style={{ color: 'var(--foreground)' }}>{wish.title}</h1>
 
         <p className="leading-relaxed whitespace-pre-wrap mb-6" style={{ color: 'var(--foreground)' }}>
           {wish.description}

@@ -21,11 +21,6 @@ export default function WishCard({ wish }: WishCardProps) {
             <CategoryBadge name={wish.category_name} color={wish.category_color} />
           </div>
 
-          {/* 日期 */}
-          <span className="text-xs" style={{ color: 'var(--muted)' }}>
-            發起：{new Date(wish.created_at).toLocaleDateString('zh-TW', { year: 'numeric', month: 'long', day: 'numeric' })}
-          </span>
-
           {/* 標題 */}
           <h3
             className="font-semibold text-base leading-snug line-clamp-2"

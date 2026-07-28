@@ -1,0 +1,44 @@
+# Jōzō 揪作許願池 — 開發日誌
+日期：2026-07-24
+專案路徑：D:\vibecoding\wishpool-app
+GitHub：https://github.com/resad1983/-jozo-wishpool
+正式網址：https://resad-secondbrain.zeabur.app
+
+---
+
+## 本日完成項目
+
+### 降低 Zeabur 部署記憶體用量
+
+**原因：** 使用者反映 Zeabur 上的記憶體用量偏高。
+
+**排查過程：**
+- 檢查 `lib/db.ts`、API routes、`lib/auth.ts`：未發現記憶體洩漏（Neon 使用無伺服器 HTTP driver，無常駐連線池；無全域快取、無 `setInterval` 等常駐計時器）
+- 確認根因：`next.config.ts` 未開啟 standalone 輸出，`next start` 會把完整 `node_modules` 載入 process
+
+#### 變更內容
+
+- `next.config.ts` 新增 `output: 'standalone'`
+- 本機以 `npm run build` 驗證：建置成功，`.next/standalone` 產出正常（約 21MB，含精簡後的 `node_modules` 與 `server.js`）
+- Zeabur 部署方式確認為 Nixpacks 自動偵測（無自訂 Dockerfile），standalone 輸出與靜態資源複製由 Nixpacks 自動處理，不需額外設定
+- 監控路徑順手從 `line-bot-server/**` 改回 `*`（原本設定疑似誤指到其他 service）
+
+#### 部署後結果
+
+- 記憶體用量穩定在約 100MB 左右
+- 評估：100MB 已接近 Node.js + Next.js server 的正常底線（V8 runtime 開機即佔 40-70MB），無明顯洩漏，繼續往下壓報酬遞減，暫不進一步處理
+
+---
+
+## Commit 紀錄
+
+| Hash | 說明 |
+|------|------|
+| 0f74ebc | perf: enable standalone output to reduce runtime memory usage |
+
+---
+
+## 已知限制（延續）
+
+- 後台許願列表目前只顯示第一頁（12 筆）
+- `is_urgent` 欄位於 Neon schema 尚未建立（urgent route 暫不啟用）

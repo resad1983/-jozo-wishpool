@@ -6,7 +6,7 @@ import Providers from "@/components/Providers";
 const geist = Geist({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
-  title: "Jōzō 揪作許願池",
+  title: "臺中Jōzō - 揪作許願池",
   description: "有想做的事？找對的人，一起揪作",
 };
 
