@@ -1,0 +1,45 @@
+# Jōzō 揪作許願池 — 開發日誌
+日期：2026-07-28
+專案路徑：D:\vibecoding\wishpool-app
+GitHub：https://github.com/resad1983/-jozo-wishpool
+正式網址：https://jozo-wishing-pool.zeabur.app
+
+---
+
+## 本日完成項目
+
+### UI 文字調整
+
+- 網站標題（首頁 `<h1>` 與瀏覽器分頁標題）由「Jōzō 揪作許願池」改為「臺中Jōzō - 揪作許願池」
+- 隱藏揪作卡片上的發起日期（`components/WishCard.tsx`）
+- 隱藏留言列表的留言日期（`app/wish/[id]/CommentList.tsx`）
+- 隱藏揪作詳情頁的發起日期（`app/wish/[id]/page.tsx`）
+
+### 事故：正式網站首頁顯示「還沒有揪作」，資料庫資料未遺失
+
+**現象：** 使用者回報 https://jozo-wishing-pool.zeabur.app/ 首頁顯示空白（「還沒有揪作，來發起第一個吧！」），懷疑資料遺失。
+
+**排查：**
+- 直接呼叫 `/api/wishes`，確認資料庫內 9 筆揪作資料完整無缺，非資料遺失
+- 首頁（`app/page.tsx`）不是直接查資料庫，而是在 Server Component 內用 `fetch` 打自己的 `/api/wishes` API，`baseUrl` 取自 `process.env.NEXTAUTH_URL`；請求失敗時（`!res.ok`）會靜默回傳空陣列，畫面上不會顯示任何錯誤訊息
+- 根因：正式網站實際網域為 `jozo-wishing-pool.zeabur.app`，但 Zeabur 上的 `NEXTAUTH_URL` 環境變數指向舊網域，導致首頁自我呼叫 API 時打到錯誤網址而失敗
+
+**處理：** 使用者已在 Zeabur 後台將 `NEXTAUTH_URL` 環境變數更新為正確網域 `https://jozo-wishing-pool.zeabur.app`，重新整理後首頁資料恢復正常顯示。
+
+**已知風險（尚未處理）：** 首頁「自己打自己 API」取資料的寫法本質上脆弱，只要 `NEXTAUTH_URL` 與實際網域不一致（例如未來又換網域、或自訂網域設定變動）就會無聲失效、看起來像資料遺失。根治方案是把首頁改成直接查詢資料庫，不透過 HTTP 自我呼叫，列入待辦。
+
+---
+
+## Commit 紀錄
+
+| Hash | 說明 |
+|------|------|
+| 8b61fe0 | copy: rename site title to 臺中Jōzō - 揪作許願池; hide dates on cards, comments, and detail page |
+
+---
+
+## 已知限制（延續）
+
+- 後台許願列表目前只顯示第一頁（12 筆）
+- `is_urgent` 欄位於 Neon schema 尚未建立（urgent route 暫不啟用）
+- 首頁資料讀取透過自我呼叫 `/api/wishes`（依賴 `NEXTAUTH_URL` 環境變數與實際網域一致），建議改為直接查資料庫以根除此風險
