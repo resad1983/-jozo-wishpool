@@ -33,16 +33,16 @@ export default async function Home({
     <main className="max-w-5xl mx-auto px-4 py-10">
       {/* Header */}
       <div className="mb-8">
-        <div className="flex items-center justify-between">
+        <div className="flex items-start justify-between">
           <div>
             <h1 className="text-xl sm:text-2xl font-bold" style={{ color: 'var(--foreground)' }}>臺中Jōzō - 揪作許願池</h1>
             <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>有想做的事？找對的人，一起揪作</p>
           </div>
-          <div className="flex items-center gap-2 shrink-0">
-            <span className="hidden sm:block w-px h-6 mr-1" style={{ background: 'var(--border)' }} />
+          <div className="hidden sm:flex items-end gap-2 shrink-0">
+            <span className="w-px h-6 mr-1" style={{ background: 'var(--border)' }} />
             <Link
               href="/wish/new"
-              className="hidden sm:inline-flex bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity whitespace-nowrap"
+              className="inline-flex bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity whitespace-nowrap"
             >
               ✨ 發起揪作
             </Link>
@@ -56,12 +56,22 @@ export default async function Home({
             </Link>
           </div>
         </div>
-        <Link
-          href="/wish/new"
-          className="sm:hidden mt-4 inline-flex bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity whitespace-nowrap"
-        >
-          ✨ 發起揪作
-        </Link>
+        <div className="flex sm:hidden items-center gap-2 mt-4">
+          <Link
+            href="/wish/new"
+            className="flex-1 text-center bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity whitespace-nowrap"
+          >
+            ✨ 發起揪作
+          </Link>
+          <ThemeToggle />
+          <Link
+            href="/admin"
+            className="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400 text-sm shrink-0"
+            title="管理員登入"
+          >
+            🔑
+          </Link>
+        </div>
       </div>
 
       {/* Filter */}
