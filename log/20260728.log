@@ -28,6 +28,24 @@ GitHub：https://github.com/resad1983/-jozo-wishpool
 
 **已知風險（尚未處理）：** 首頁「自己打自己 API」取資料的寫法本質上脆弱，只要 `NEXTAUTH_URL` 與實際網域不一致（例如未來又換網域、或自訂網域設定變動）就會無聲失效、看起來像資料遺失。根治方案是把首頁改成直接查詢資料庫，不透過 HTTP 自我呼叫，列入待辦。
 
+### 資安快速檢查：view-source 風險評估
+
+使用者詢問「按看網頁原始碼」的資安風險，逐項檢查：
+
+- **敏感環境變數**（`DATABASE_URL`、`NEXTAUTH_SECRET`）只在伺服器端程式碼使用，沒有傳進 Client Component 或印進 HTML，原始碼看不到
+- **API 回傳欄位**：wishes / comments / joins 資料表只有本來就設計公開顯示的欄位（name、social、content、message 等），沒有 email、IP 等隱私欄位混入序列化資料
+- **Session**：next-auth 預設 httpOnly cookie，view-source 看不到
+- **JSX 註解**：React 編譯時會拿掉，不會出現在瀏覽器看到的 HTML
+
+檢查中順便發現兩個低風險、可低成本補強的項目：
+1. Honeypot 欄位名稱（`name="honeypot"`）在原始碼可見，進階機器人可辨識繞過——這是 honeypot 機制本身的已知取捨，暫不處理
+2. `X-Powered-By: Next.js` response header 預設會洩漏框架資訊，方便攻擊者做偵查
+
+#### 已修正：關閉 X-Powered-By header
+
+- `next.config.ts` 新增 `poweredByHeader: false`
+- 本機以 dev server 驗證：`fetch('/')` 回應 header 已不含 `x-powered-by`
+
 ---
 
 ## Commit 紀錄
@@ -35,6 +53,8 @@ GitHub：https://github.com/resad1983/-jozo-wishpool
 | Hash | 說明 |
 |------|------|
 | 8b61fe0 | copy: rename site title to 臺中Jōzō - 揪作許願池; hide dates on cards, comments, and detail page |
+| 06cb0c5 | docs: log 2026-07-28 UI tweaks and NEXTAUTH_URL incident, bump spec to v1.5 |
+| 394b366 | security: disable X-Powered-By header to reduce framework fingerprinting |
 
 ---
 
@@ -43,3 +63,4 @@ GitHub：https://github.com/resad1983/-jozo-wishpool
 - 後台許願列表目前只顯示第一頁（12 筆）
 - `is_urgent` 欄位於 Neon schema 尚未建立（urgent route 暫不啟用）
 - 首頁資料讀取透過自我呼叫 `/api/wishes`（依賴 `NEXTAUTH_URL` 環境變數與實際網域一致），建議改為直接查資料庫以根除此風險
+- Honeypot 欄位名稱在原始碼中可見，進階機器人可能辨識並繞過

@@ -32,23 +32,23 @@ export default async function Home({
   return (
     <main className="max-w-5xl mx-auto px-4 py-10">
       {/* Header */}
-      <div className="flex items-center justify-between mb-8">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between mb-8">
         <div>
-          <h1 className="text-2xl font-bold" style={{ color: 'var(--foreground)' }}>臺中Jōzō - 揪作許願池</h1>
+          <h1 className="text-xl sm:text-2xl font-bold" style={{ color: 'var(--foreground)' }}>臺中Jōzō - 揪作許願池</h1>
           <p className="text-sm mt-1" style={{ color: 'var(--muted)' }}>有想做的事？找對的人，一起揪作</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0">
           <ThemeToggle />
           <Link
             href="/admin"
-            className="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400 text-sm"
+            className="w-9 h-9 flex items-center justify-center rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors text-gray-500 dark:text-gray-400 text-sm shrink-0"
             title="管理員登入"
           >
             🔑
           </Link>
           <Link
             href="/wish/new"
-            className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity"
+            className="bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-5 py-2.5 rounded-lg text-sm font-medium hover:opacity-80 transition-opacity whitespace-nowrap"
           >
             ✨ 發起揪作
           </Link>
