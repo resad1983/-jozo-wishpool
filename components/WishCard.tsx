@@ -10,7 +10,7 @@ interface WishCardProps {
 
 export default function WishCard({ wish }: WishCardProps) {
   return (
-    <Link href={`/wish/${wish.id}`} className="block w-72 h-72 shrink-0">
+    <Link href={`/wish/${wish.id}`} className="block w-full h-72">
       <div
         style={{ background: 'var(--card)', borderColor: 'var(--border)' }}
         className="rounded-xl shadow-sm border hover:shadow-md transition-all h-full flex flex-col overflow-hidden"

@@ -88,7 +88,7 @@ export default async function Home({
           <p>還沒有揪作，來發起第一個吧！</p>
         </div>
       ) : (
-        <div className="flex flex-wrap gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {wishes.map((wish) => (
             <WishCard key={wish.id} wish={wish} />
           ))}
