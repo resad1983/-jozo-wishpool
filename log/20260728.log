@@ -46,6 +46,19 @@ GitHub：https://github.com/resad1983/-jozo-wishpool
 - `next.config.ts` 新增 `poweredByHeader: false`
 - 本機以 dev server 驗證：`fetch('/')` 回應 header 已不含 `x-powered-by`
 
+### 新增示範揪作內容（協作計畫 / 空間場域 / 研究調查 各 2 則）
+
+- 用 `POST /api/wishes` 對正式網站送出 6 則台中舊城文化風格的示範揪作
+- **事故**：前 2 則（協作計畫）用 Windows Git Bash 的 `curl -d` 直接帶中文參數送出，終端機編碼問題導致中文全部變成亂碼寫入資料庫。改用 Node 腳本（`node --env-file=.env.local`）直接連 Neon 資料庫，以 `UPDATE` 修正這 2 則的亂碼內容，後續 4 則改用同樣的直連資料庫方式 `INSERT`，避免同樣問題。修正／新增用的一次性腳本事後已刪除，未留在 repo 裡
+- 確認過正式網站 API 回傳文字皆正常顯示
+
+### 首頁 Header 版面調整（依使用者視覺回饋多輪迭代）
+
+1. 手機寬度下標題與右側按鈕群改為上下兩排，避免擠壓（`flex-col sm:flex-row`）
+2. 依設計回饋調整順序與分組：桌機版右側為「分隔線 → 發起揪作按鈕 → 🌙 → 🔑」；手機版圖示先留在標題列右側
+3. 對齊修正：桌機版按鈕與圖示改用 `items-end` 底部對齊（原本 `items-center` 因按鈕與圖示高度不同而看起來不齊）；手機版改為「發起揪作」按鈕加寬（`flex-1`）+ 🌙🔑 移到同一排靠右
+4. **卡片版面對齊**：使用者希望按鈕/圖示區塊右邊界跟卡片右邊界對齊。原本卡片是固定 288px 寬用 `flex-wrap` 排列，最後一欄不會貼齊容器邊界。改成 `grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3`，`WishCard` 寬度改 `w-full`（原 `w-72 shrink-0`），讓每列卡片撐滿寬度。本機以電腦與手機寬度分別量測，按鈕/篩選列與卡片右邊界數值完全一致
+
 ---
 
 ## Commit 紀錄
@@ -55,6 +68,10 @@ GitHub：https://github.com/resad1983/-jozo-wishpool
 | 8b61fe0 | copy: rename site title to 臺中Jōzō - 揪作許願池; hide dates on cards, comments, and detail page |
 | 06cb0c5 | docs: log 2026-07-28 UI tweaks and NEXTAUTH_URL incident, bump spec to v1.5 |
 | 394b366 | security: disable X-Powered-By header to reduce framework fingerprinting |
+| ca5f7fc | fix: stack header title and actions vertically on mobile to prevent crowding |
+| bdd5e60 | style: rework header layout per design feedback |
+| 74c0a52 | style: align header actions to bottom on desktop, move icons beside widened button on mobile |
+| 7b4dd25 | style: switch wish card grid to responsive columns so card rows align with header/filter row edge |
 
 ---
 
@@ -64,3 +81,4 @@ GitHub：https://github.com/resad1983/-jozo-wishpool
 - `is_urgent` 欄位於 Neon schema 尚未建立（urgent route 暫不啟用）
 - 首頁資料讀取透過自我呼叫 `/api/wishes`（依賴 `NEXTAUTH_URL` 環境變數與實際網域一致），建議改為直接查資料庫以根除此風險
 - Honeypot 欄位名稱在原始碼中可見，進階機器人可能辨識並繞過
+- Windows Git Bash 下用 `curl -d` 直接帶中文參數會有編碼風險，之後若要用指令列對這個 API 送中文內容，建議一律用檔案或直連資料庫的腳本方式，不要用 shell 參數帶中文
